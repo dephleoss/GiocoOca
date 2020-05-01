@@ -6,6 +6,5 @@ public class progClient {
         Cliente c1 = new Cliente();
         c.connetti();
         c.comunica();
-
     }
 }

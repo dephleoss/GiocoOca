@@ -31,8 +31,7 @@ public class Cliente {
         String stringaletta = null;
         while (true) {
             try {
-                String prova = in.readLine();
-                System.out.println(prova);
+                ricevi();
                 System.out.println("Cosa vuoi fare?");
                 stringaletta = tastiera.readLine();
                 switch (stringaletta){
@@ -69,5 +68,14 @@ public class Cliente {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public void ricevi() {
+        String prova = null;
+        try {
+            prova = in.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(prova);
     }
 }

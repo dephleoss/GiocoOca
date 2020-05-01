@@ -13,6 +13,7 @@ public class Server extends Thread{
     DataOutputStream outClient;
     private int posizione;
     private int dado;
+    private  int aspetta=0;
     public Server(Socket s){
         this.client = s;
     }
@@ -34,7 +35,7 @@ public class Server extends Thread{
                 if (dado!=0) {
                     System.out.println("Numero ricevuto:"+ dado);
                     calcolaPosizione();
-                    inviaMessage("La tua posizione è: "+posizione);
+
                     /*if (stringaricevuta.equals("FINE")) {
                         System.out.println("Stringa ricevuta :" + stringaricevuta);
                         String stringam = stringaricevuta.toUpperCase();
@@ -82,52 +83,63 @@ public class Server extends Thread{
         return mex;
     }
     public void controllaPosizione(){
-        switch(posizione){
-            case 5:
-            case 9:
-            case 18:
-            case 27:
-            case 36:
-            case 45:
-            case 54:
-                inviaMessage("OCA! Ripeti il movimento");
-                posizione+=dado;
-                controllaPosizione();
-                break;
-            case 6:
-                inviaMessage("PONTE! Ripeti il movimento");
-                posizione+=dado;
-                controllaPosizione();
-                break;
-            case 19:
-                inviaMessage("LOCANDA! Stai fermo per 3 turni");
-                break;
-            case 31:
-                inviaMessage("POZZO! rimani bloccato finchè non arriva un’altra pedina che prenderà il tuo posto");
-                break;
-            case 52:
-                inviaMessage("PRIGIONE! rimani bloccato finchè non arriva un’altra pedina che prenderà il tuo posto");
-                break;
-            case 42:
-                inviaMessage("LABIRINTO! Ritorna alla casella 33");
-                posizione=33;
-                break;
-            case 58:
-                inviaMessage("SCHELETRO! Ritorna alla casella 1");
-                posizione=1;
-                break;
-            case 63:
-                System.out.println("HAI VINTO!");
-                break;
+        if(posizione<=63) {
+            switch (posizione) {
+                case 5:
+                case 9:
+                case 18:
+                case 27:
+                case 36:
+                case 45:
+                case 54:
+                    posizione += dado;
+                    inviaMessage("OCA! Ripeti il movimento la tua posizione è: "+posizione);
+                    controllaPosizione();
+                    break;
+                case 6:
+                    inviaMessage("PONTE! Ripeti il movimento");
+                    posizione += dado;
+                    controllaPosizione();
+                    break;
+                case 19:
+                    inviaMessage("LOCANDA! Stai fermo per 3 turni");
+                    aspetta = 3;
+                    break;
+                case 31:
+                    inviaMessage("POZZO! rimani bloccato finchè non arriva un’altra pedina che prenderà il tuo posto");
+                    break;
+                case 52:
+                    inviaMessage("PRIGIONE! rimani bloccato finchè non arriva un’altra pedina che prenderà il tuo posto");
+                    break;
+                case 42:
+                    inviaMessage("LABIRINTO! Ritorna alla casella 33");
+                    posizione = 33;
+                    break;
+                case 58:
+                    inviaMessage("SCHELETRO! Ritorna alla casella 1");
+                    posizione = 1;
+                    break;
+                case 63:
+                    inviaMessage("HAI VINTO!");
+                    break;
+                default:
+                    inviaMessage("La tua posizione è: "+posizione);
+
+            }
+        }else{
+            System.out.println(posizione);
+            int passiIndietro= posizione - 63;
+            posizione=posizione-passiIndietro;
+            inviaMessage("HAI SUPERATO LA CASELLA 63! Torni alla casella: "+posizione);
         }
     }
     public void calcolaPosizione(){
-        posizione= posizione+dado;
-        if(posizione>63){
-            posizione= posizione-dado;
-            System.out.println("HAI SUPERATO LA CASELLA 63! Torni alla casella precedente");
-        }else{
+       if(aspetta==0){
+            posizione= posizione+dado;
             controllaPosizione();
+        }else{
+            aspetta=aspetta-1;
+            inviaMessage("Devi Aspettare ancora "+aspetta+" turni");
         }
     }
 
